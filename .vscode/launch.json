@@ -8,7 +8,7 @@
             "type": "lua",
             "request": "launch",
             "name": "Debug",
-            "program": "${workspaceFolder}/iter.lua"
+            "program": "${workspaceFolder}/vendor.lua"
         }
     ]
 }
