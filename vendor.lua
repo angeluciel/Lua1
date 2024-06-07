@@ -21,9 +21,6 @@ end
 
 local playerMoney = 50
 -- sets the variable playerMoney to 50, to symbolize how many $ it has.
-local index = 1
--- sets the variable index to 1, as lua starts arrays in 1 and will
--- be used afterwards
 
 print ("\nYour wallet: $" .. playerMoney .. "\n")
 
@@ -33,42 +30,45 @@ local NPC_vendor_items = {
     {name = "Makeshift Spear", price = 45},
 }
 --[[ 
-    created and array has the properties name and price, and 
+    created an array has the properties name and price, and 
     set it to different values afterwards.
 ]]--
 
-local max_lenght = 0
--- created a variable to keep track of the lenght of the item name
+local max_length = 0
+-- created a variable to keep track of the length of the item name
 for _, item in ipairs(NPC_vendor_items) do
 -- "_" symbolizes that we will ignore the value, in this case the index
-    if #item.name > max_lenght then
-    -- # operator is used to get the lenght of a string << same as string.len(item.name)
-        max_lenght = #item.name
+    if #item.name > max_length then
+    -- # operator is used to get the length of a string << same as string.len(item.name)
+        max_length = #item.name
     end
 end
 
--- created a loop to determine the lenght of the longest item name.
-
-for _, item in ipairs(NPC_vendor_items) do
-    local spaces = string.rep(" ", max_lenght - #item.name + 1)
-    print(index .. " - " .. item.name .. spaces .. "| Price: $" .. item.price)
-    index = index + 1
+-- created a loop to determine the length of the longest item name.
+local function show_items()
+    local index = 1 -- Reset index inside the function
+    for _, item in ipairs(NPC_vendor_items) do
+        local spaces = string.rep(" ", max_length - #item.name + 1)
+        print(index .. " - " .. item.name .. spaces .. "| Price: $" .. item.price)
+        index = index + 1
+    end
+    print ("4 - Cancel")
 end
 
 local function inquireBuyer()
     print ("\nSelect an item you'd like to buy.")
-    for i, item in ipairs(NPC_vendor_items) do
-        print("[ " .. i .. " ] " .. item.name)
-    end
+    show_items()
     io.write("> ")
     local itemSelected = tonumber(io.read())
-
-    if itemSelected and NPC_vendor_items[itemSelected] then
+    
+    if itemSelected == 4 then
+        return "cancel"
+    elseif itemSelected and NPC_vendor_items[itemSelected] then
         local selectedItem = NPC_vendor_items[itemSelected]
         local itemPrice = selectedItem.price
         if playerMoney >= itemPrice then
-            print("\nYou've bought " .. selectedItem.name .. "!")
-            return true, itemPrice
+            print("\nYou've bought " .. selectedItem.name .. "!\n")
+            return true, itemPrice, selectedItem.name
         else
             print("\nYou don't have enough money to buy a " .. selectedItem.name)
             return false, itemPrice
@@ -79,8 +79,30 @@ local function inquireBuyer()
     end
 end
 
-local success, price = inquireBuyer(playerMoney)
-if success then
-    playerMoney = playerMoney - price
-    print("Remaining funds: $" .. playerMoney)
+local function main()
+    local items_bought = {} 
+    while playerMoney > 0 do
+        local success, price, itemName = inquireBuyer()
+        if success == "cancel" then
+            break 
+        elseif success then
+            playerMoney = playerMoney - price
+            print("Remaining funds: $" .. playerMoney)
+            if not items_bought[itemName] then
+                items_bought[itemName] = 0
+            end
+            items_bought[itemName] = items_bought[itemName] + 1
+        end
+    end
+
+    if next(items_bought) then
+        print("Thanks for buying!")
+        for item, quantity in pairs (items_bought) do
+            print("You bought " .. quantity .. "x " .. item)
+        end
+    else
+        print("Thank you for stopping by!")
+    end
 end
+
+main()
