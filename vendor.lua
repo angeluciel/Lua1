@@ -24,62 +24,48 @@ local index = 1
 
 print ("\nYour wallet: $" .. playerMoney .. "\n")
 
-
-local NPC_vendor_items = {
-    ["Healing Potion"]  = 5,
-    ["Steel Sword"]     = 50,
-    ["Makeshift Spear"] = 45
-}
-
---[[
 local NPC_vendor_items = {
     {name = "Healing Potion", price = 5},
     {name = "Steel Sword", price = 50},
     {name = "Makeshift Spear", price = 45},
-} ]]--
+}
 
 local max_lenght = 0
-for i, _ in pairs(NPC_vendor_items) do
-    if #i > max_lenght then
-        max_lenght = #i
+for _, item in ipairs(NPC_vendor_items) do
+    if #item.name > max_lenght then
+        max_lenght = #item.name
     end
 end
 
 -- created a loop to determine the lenght of the longest item name.
 
-for i, value in pairs(NPC_vendor_items) do
-    local spaces = string.rep(" ", max_lenght - #i + 1)
-    print(index .. " - " .. i .. spaces .. "| Price: $" .. value)
+local index = 1
+for _, item in ipairs(NPC_vendor_items) do
+    local spaces = string.rep(" ", max_lenght - #item.name + 1)
+    print(index .. " - " .. item.name .. spaces .. "| Price: $" .. item.price)
     index = index + 1
 end
 
 local function inquireBuyer()
-    print ("\nSelect an item you'd like to buy.\n[ 1 ] [ 2 ] [ 3 ]\n")
+    print ("\nSelect an item you'd like to buy.")
+    for i, item in ipairs(NPC_vendor_items) do
+        print("[ " .. i .. " ] " .. item.name)
+    end
     io.write("> ")
     local itemSelected = tonumber(io.read())
 
-    if itemSelected and itemSelected == 1 then
-        itemSelected = "Healing Potion"
-    elseif itemSelected and itemSelected == 2 then
-        itemSelected = "Steel Sword"
-    elseif itemSelected == 3 then
-        itemSelected = "Makeshift Spear"
-    else
-        print("Check your spelling.")
-        return false
-    end
-
-    if NPC_vendor_items[itemSelected] then
-        local itemPrice = NPC_vendor_items[itemSelected]
+    if itemSelected and NPC_vendor_items[itemSelected] then
+        local selectedItem = NPC_vendor_items[itemSelected]
+        local itemPrice = selectedItem.price
         if playerMoney >= itemPrice then
-            print("You've bought " .. itemSelected .. "!")
+            print("You've bought " .. selectedItem.name .. "!")
             return true, itemPrice
         else
-            print ("You don't have enough money to buy " .. itemSelected)
+            print("You don't have enough money to buy a " .. selectedItem.name)
             return false, itemPrice
         end
     else
-        print("Sorry, we don't have " .. itemSelected .. " in stock.")
+        print("Invalid selection. Try again.")
         return false, 0
     end
 end
