@@ -20,7 +20,10 @@ end
 -- best practice way to make a shop system.
 
 local playerMoney = 50
+-- sets the variable playerMoney to 50, to symbolize how many $ it has.
 local index = 1
+-- sets the variable index to 1, as lua starts arrays in 1 and will
+-- be used afterwards
 
 print ("\nYour wallet: $" .. playerMoney .. "\n")
 
@@ -29,10 +32,17 @@ local NPC_vendor_items = {
     {name = "Steel Sword", price = 50},
     {name = "Makeshift Spear", price = 45},
 }
+--[[ 
+    created and array has the properties name and price, and 
+    set it to different values afterwards.
+]]--
 
 local max_lenght = 0
+-- created a variable to keep track of the lenght of the item name
 for _, item in ipairs(NPC_vendor_items) do
+-- "_" symbolizes that we will ignore the value, in this case the index
     if #item.name > max_lenght then
+    -- # operator is used to get the lenght of a string << same as string.len(item.name)
         max_lenght = #item.name
     end
 end
@@ -57,10 +67,10 @@ local function inquireBuyer()
         local selectedItem = NPC_vendor_items[itemSelected]
         local itemPrice = selectedItem.price
         if playerMoney >= itemPrice then
-            print("You've bought " .. selectedItem.name .. "!")
+            print("\nYou've bought " .. selectedItem.name .. "!")
             return true, itemPrice
         else
-            print("You don't have enough money to buy a " .. selectedItem.name)
+            print("\nYou don't have enough money to buy a " .. selectedItem.name)
             return false, itemPrice
         end
     else
