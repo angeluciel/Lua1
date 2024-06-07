@@ -39,7 +39,6 @@ end
 
 -- created a loop to determine the lenght of the longest item name.
 
-local index = 1
 for _, item in ipairs(NPC_vendor_items) do
     local spaces = string.rep(" ", max_lenght - #item.name + 1)
     print(index .. " - " .. item.name .. spaces .. "| Price: $" .. item.price)
